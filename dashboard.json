@@ -1,0 +1,3162 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 8,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "displayName": "${Sprint:text}",
+          "mappings": [],
+          "max": 1200000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 2.6666666666666665,
+        "x": 0,
+        "y": 0
+      },
+      "id": 7,
+      "links": [],
+      "maxPerRow": 12,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {},
+        "valueMode": "color"
+      },
+      "pluginVersion": "9.5.2",
+      "repeat": "Sprint",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT SUM(additions) - SUM(deletions) \nFROM commits\nWHERE committed_date BETWEEN \n    STR_TO_DATE(SUBSTRING_INDEX($Sprint, ' - ', 1), '%Y-%m-%d %H:%i:%s') \n    AND \n    STR_TO_DATE(SUBSTRING_INDEX($Sprint, ' - ', -1), '%Y-%m-%d %H:%i:%s');\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Change Volume",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "from": -100,
+                "result": {
+                  "color": "red",
+                  "index": 0
+                },
+                "to": -1
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 1,
+                "result": {
+                  "color": "green",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 0,
+        "y": 9
+      },
+      "id": 9,
+      "links": [],
+      "options": {
+        "inlineEditing": true,
+        "root": {
+          "background": {
+            "color": {
+              "field": "result",
+              "fixed": "transparent"
+            },
+            "image": {
+              "field": "result",
+              "fixed": "",
+              "mode": "field"
+            },
+            "size": "cover"
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            },
+            "width": 0
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "this_week",
+                  "mode": "field"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "this_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "This Week:",
+              "placement": {
+                "height": 53.99305725097656,
+                "left": 195,
+                "top": 180,
+                "width": 93.99302673339844
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "fixed": "This Week:"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 3",
+              "placement": {
+                "height": 83.38542175292969,
+                "left": 86,
+                "top": 164,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "last_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 5",
+              "placement": {
+                "height": 46.68402862548828,
+                "left": 186,
+                "top": 142,
+                "width": 113.4721908569336
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "#d4dae1f0"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "size": "tile"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "size": 21,
+                "text": {
+                  "fixed": "Deployment Frequency"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 7",
+              "placement": {
+                "height": 70,
+                "left": 42,
+                "top": 24,
+                "width": 285.9895935058594
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 0
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "result",
+                  "fixed": "Last Week:",
+                  "mode": "fixed"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 4",
+              "placement": {
+                "height": 83.4201431274414,
+                "left": 86,
+                "top": 125,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "fill": {
+                  "fixed": "#D9D9D9"
+                },
+                "path": {
+                  "fixed": "img/icons/unicons/arrow-up.svg",
+                  "mode": "fixed"
+                }
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 6",
+              "placement": {
+                "height": 100,
+                "left": 275,
+                "top": 133,
+                "width": 100
+              },
+              "type": "icon"
+            }
+          ],
+          "name": "Element 1699338622230",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  (SELECT COUNT(*) FROM cicd_pipelines WHERE created_date >= '2023-09-30 00:00:00.000' AND created_date < '2023-10-03 00:00:00.000' AND result = 'SUCCESS' AND id LIKE \"%jenkins%\") AS last_week,\n  (SELECT COUNT(*) FROM cicd_pipelines WHERE created_date >= '2023-10-04 00:00:00.000' AND created_date < '2023-10-10 00:00:00.000' AND result = 'SUCCESS' AND id LIKE \"%jenkins%\") AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "canvas"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "light-blue",
+                  "index": 1
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "from": -100,
+                "result": {
+                  "color": "red",
+                  "index": 0
+                },
+                "to": -1
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 1,
+                "result": {
+                  "color": "green",
+                  "index": 2
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 7,
+        "y": 9
+      },
+      "id": 16,
+      "links": [],
+      "options": {
+        "inlineEditing": true,
+        "root": {
+          "background": {
+            "color": {
+              "field": "result",
+              "fixed": "transparent"
+            },
+            "image": {
+              "field": "result",
+              "fixed": "",
+              "mode": "field"
+            },
+            "size": "cover"
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            },
+            "width": 0
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "this_week",
+                  "mode": "field"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "this_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "This Week:",
+              "placement": {
+                "height": 53.99305725097656,
+                "left": 195,
+                "top": 180,
+                "width": 93.99302673339844
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "fixed": "This Week:"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 3",
+              "placement": {
+                "height": 83.38542175292969,
+                "left": 86,
+                "top": 164,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "last_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 5",
+              "placement": {
+                "height": 46.68402862548828,
+                "left": 186,
+                "top": 142,
+                "width": 113.4721908569336
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "#d4dae1f0"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "size": "tile"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "size": 21,
+                "text": {
+                  "fixed": "Mean Time to Recovery"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 7",
+              "placement": {
+                "height": 70,
+                "left": 42,
+                "top": 24,
+                "width": 285.9895935058594
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 0
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "result",
+                  "fixed": "Last Week:",
+                  "mode": "fixed"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 4",
+              "placement": {
+                "height": 83.4201431274414,
+                "left": 86,
+                "top": 125,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "fill": {
+                  "fixed": "#D9D9D9"
+                },
+                "path": {
+                  "fixed": "img/icons/unicons/arrow-down.svg",
+                  "mode": "fixed"
+                }
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 6",
+              "placement": {
+                "height": 100,
+                "left": 288,
+                "top": 127,
+                "width": 100.00001525878906
+              },
+              "type": "icon"
+            }
+          ],
+          "name": "Element 1699338622230",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n    (SELECT AVG(TIMESTAMPDIFF(MINUTE, created_date, resolution_date))\n    FROM\n    issues\n    WHERE\n    resolution_date IS NOT NULL\n    AND created_date >= '2023-10-09 06:07:08.000'\n    AND created_date < '2023-10-24 06:36:00.000') AS last_week,\n\n    (SELECT AVG(TIMESTAMPDIFF(MINUTE, created_date, resolution_date))\n    FROM\n    issues\n    WHERE\n    resolution_date IS NOT NULL\n    AND created_date >= '2023-10-09 06:36:00.000'\n    AND created_date < '2023-10-24 06:59:14.794') AS this_week,\n\n    (SELECT (last_week - this_week)) AS result;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "canvas"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "light-blue",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "from": -100,
+                "result": {
+                  "color": "green",
+                  "index": 1
+                },
+                "to": -1
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 1,
+                "result": {
+                  "color": "red",
+                  "index": 2
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 14,
+        "y": 9
+      },
+      "id": 12,
+      "links": [],
+      "options": {
+        "inlineEditing": true,
+        "root": {
+          "background": {
+            "color": {
+              "field": "result",
+              "fixed": "transparent"
+            },
+            "image": {
+              "field": "result",
+              "fixed": "",
+              "mode": "field"
+            },
+            "size": "cover"
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            },
+            "width": 0
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "this_week",
+                  "mode": "field"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "this_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "This Week:",
+              "placement": {
+                "height": 53.99305725097656,
+                "left": 195,
+                "top": 180,
+                "width": 93.99302673339844
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "fixed": "This Week:"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 3",
+              "placement": {
+                "height": 83.38542175292969,
+                "left": 78,
+                "top": 163,
+                "width": 166.875
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "last_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 5",
+              "placement": {
+                "height": 46.68402862548828,
+                "left": 186,
+                "top": 142,
+                "width": 113.4721908569336
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "#d4dae1f0"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "size": "tile"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "size": 21,
+                "text": {
+                  "fixed": "Lead Time (from Dev to Deploy)"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 7",
+              "placement": {
+                "height": 70,
+                "left": 42,
+                "top": 24,
+                "width": 285.9895935058594
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 0
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "result",
+                  "fixed": "Last Week:",
+                  "mode": "fixed"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 4",
+              "placement": {
+                "height": 83.41667175292969,
+                "left": 78,
+                "top": 124,
+                "width": 166.875
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "fill": {
+                  "fixed": "#D9D9D9"
+                },
+                "path": {
+                  "fixed": "img/icons/unicons/arrow-down.svg",
+                  "mode": "fixed"
+                }
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 6",
+              "placement": {
+                "height": 99.99998474121094,
+                "left": 283,
+                "top": 131,
+                "width": 100.00001525878906
+              },
+              "type": "icon"
+            }
+          ],
+          "name": "Element 1699338622230",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  (SELECT AVG(duration_sec) FROM cicd_pipelines WHERE created_date >= '2023-09-27 00:00:00.000' AND created_date < '2023-10-03 00:00:00.000' AND result = 'SUCCESS' AND id LIKE \"%jenkins%\") AS last_week,\n  (SELECT AVG(duration_sec) FROM cicd_pipelines WHERE created_date >= '2023-10-06 00:00:00.000' AND created_date < '2023-10-10 00:00:00.000' AND result = 'SUCCESS' AND id LIKE \"%jenkins%\") AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "canvas"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "light-blue",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "from": -100,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": -1
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 1,
+                "result": {
+                  "color": "green",
+                  "index": 2
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 0,
+        "y": 17
+      },
+      "id": 18,
+      "links": [],
+      "options": {
+        "inlineEditing": true,
+        "root": {
+          "background": {
+            "color": {
+              "field": "result",
+              "fixed": "transparent"
+            },
+            "image": {
+              "field": "result",
+              "fixed": "",
+              "mode": "field"
+            },
+            "size": "cover"
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            },
+            "width": 0
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "this_week",
+                  "mode": "field"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "this_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "This Week:",
+              "placement": {
+                "height": 53.99305725097656,
+                "left": 195,
+                "top": 180,
+                "width": 93.99302673339844
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "fixed": "This Week:"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 3",
+              "placement": {
+                "height": 83.38542175292969,
+                "left": 86,
+                "top": 164,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "last_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 5",
+              "placement": {
+                "height": 46.6796875,
+                "left": 186,
+                "top": 142,
+                "width": 113.45703125
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "#d4dae1f0"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "size": "tile"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "size": 21,
+                "text": {
+                  "fixed": "% Failed Deployments"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 7",
+              "placement": {
+                "height": 70,
+                "left": 42,
+                "top": 24,
+                "width": 285.98956298828125
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 0
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "result",
+                  "fixed": "Last Week:",
+                  "mode": "fixed"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 4",
+              "placement": {
+                "height": 83.41796875,
+                "left": 86,
+                "top": 125,
+                "width": 166.875
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "fill": {
+                  "fixed": "#D9D9D9"
+                },
+                "path": {
+                  "fixed": "img/icons/unicons/arrow-up.svg",
+                  "mode": "fixed"
+                }
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 6",
+              "placement": {
+                "height": 99.99998474121094,
+                "left": 295,
+                "top": 136,
+                "width": 100
+              },
+              "type": "icon"
+            }
+          ],
+          "name": "Element 1699338622230",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n    (SELECT (SUM(CASE WHEN result = 'FAILURE' AND id LIKE '%jenkins%' THEN 1 ELSE 0 END) / COUNT(*)) * 100\n     FROM cicd_pipelines\n     WHERE created_date >= '2023-09-30 00:00:00.000' AND created_date < '2023-10-05 00:00:00.000') AS last_week,\n    \n    (SELECT (SUM(CASE WHEN result = 'FAILURE' AND id LIKE '%jenkins%' THEN 1 ELSE 0 END) / COUNT(*)) * 100\n     FROM cicd_pipelines\n     WHERE created_date >= '2023-09-01 00:00:00.000' AND created_date < '2023-10-10 00:00:00.000') AS this_week,\n\n    (SELECT (last_week - this_week)) AS result;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "canvas"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "d0528037-0a84-40ff-aecf-ab8434a2da62"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "light-blue",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "from": -100,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": -1
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 1,
+                "result": {
+                  "color": "green",
+                  "index": 2
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 7,
+        "y": 17
+      },
+      "id": 20,
+      "links": [],
+      "options": {
+        "inlineEditing": true,
+        "root": {
+          "background": {
+            "color": {
+              "field": "Value",
+              "fixed": "transparent"
+            },
+            "image": {
+              "field": "result",
+              "fixed": "",
+              "mode": "field"
+            },
+            "size": "cover"
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            },
+            "width": 0
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "field": "Value",
+                  "fixed": "#D9D9D9"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "Value",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "This Week:",
+              "placement": {
+                "height": 53.984375,
+                "left": 195,
+                "top": 180,
+                "width": 93.984375
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "fixed": "This Week:"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 3",
+              "placement": {
+                "height": 83.38542175292969,
+                "left": 86,
+                "top": 164,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "field": "Value",
+                  "fixed": "#D9D9D9"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "Value",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 5",
+              "placement": {
+                "height": 46.6796875,
+                "left": 186,
+                "top": 142,
+                "width": 113.45703125
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "#d4dae1f0"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "size": "tile"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "size": 21,
+                "text": {
+                  "fixed": "Availability"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 7",
+              "placement": {
+                "height": 70,
+                "left": 42,
+                "top": 24,
+                "width": 285.98956298828125
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 0
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "result",
+                  "fixed": "Last Week:",
+                  "mode": "fixed"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 4",
+              "placement": {
+                "height": 83.4201431274414,
+                "left": 86,
+                "top": 125,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "fill": {
+                  "fixed": "#D9D9D9"
+                },
+                "path": {
+                  "fixed": "img/icons/unicons/equal-mathematical-sign.svg",
+                  "mode": "fixed"
+                }
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 6",
+              "placement": {
+                "height": 157.98828125,
+                "left": 277,
+                "top": 110,
+                "width": 55.99609375
+              },
+              "type": "icon"
+            }
+          ],
+          "name": "Element 1699338622230",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "d0528037-0a84-40ff-aecf-ab8434a2da62"
+          },
+          "editorMode": "code",
+          "expr": "avg(avg_over_time(up{instance=~\"localhost:9090\",job=~\"prometheus\"}[1h]) * 100)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "d0528037-0a84-40ff-aecf-ab8434a2da62"
+          },
+          "editorMode": "code",
+          "expr": "avg(avg_over_time(up{instance=~\"localhost:9090\",job=~\"prometheus\"}[3h]) * 100)",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "transformations": [],
+      "type": "canvas"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "light-blue",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "from": -100,
+                "result": {
+                  "color": "green",
+                  "index": 1
+                },
+                "to": -1
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 1,
+                "result": {
+                  "color": "red",
+                  "index": 2
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 14,
+        "y": 17
+      },
+      "id": 17,
+      "links": [],
+      "options": {
+        "inlineEditing": true,
+        "root": {
+          "background": {
+            "color": {
+              "field": "result",
+              "fixed": "transparent"
+            },
+            "image": {
+              "field": "result",
+              "fixed": "",
+              "mode": "field"
+            },
+            "size": "cover"
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            },
+            "width": 0
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "this_week",
+                  "mode": "field"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "this_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "This Week:",
+              "placement": {
+                "height": 53.99305725097656,
+                "left": 195,
+                "top": 180,
+                "width": 93.99302673339844
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "fixed": "This Week:"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 3",
+              "placement": {
+                "height": 83.38542175292969,
+                "left": 86,
+                "top": 164,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "last_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 5",
+              "placement": {
+                "height": 46.68402862548828,
+                "left": 186,
+                "top": 142,
+                "width": 113.4721908569336
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "#d4dae1f0"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "size": "tile"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "size": 21,
+                "text": {
+                  "fixed": "Customer Ticket Volume"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 7",
+              "placement": {
+                "height": 70,
+                "left": 42,
+                "top": 24,
+                "width": 285.98956298828125
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 0
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "result",
+                  "fixed": "Last Week:",
+                  "mode": "fixed"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 4",
+              "placement": {
+                "height": 83.4201431274414,
+                "left": 86,
+                "top": 125,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "fill": {
+                  "fixed": "#D9D9D9"
+                },
+                "path": {
+                  "fixed": "img/icons/unicons/arrow-up.svg",
+                  "mode": "fixed"
+                }
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 6",
+              "placement": {
+                "height": 100,
+                "left": 288,
+                "top": 129,
+                "width": 100.00001525878906
+              },
+              "type": "icon"
+            }
+          ],
+          "name": "Element 1699338622230",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  (SELECT COUNT(*)\n    FROM\n    issues\n    WHERE\n   created_date >= '2023-10-09 06:07:08.000'\n    AND created_date < '2023-10-24 06:36:00.000') AS last_week,\n  (SELECT COUNT(*)\n    FROM\n    issues\n    WHERE\n   created_date >= '2023-10-09 06:36:00.000'\n    AND created_date < '2023-10-24 06:59:00.000') AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "canvas"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "light-blue",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "from": -100,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": -1
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 1,
+                "result": {
+                  "color": "green",
+                  "index": 2
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 0,
+        "y": 25
+      },
+      "id": 19,
+      "links": [],
+      "options": {
+        "inlineEditing": true,
+        "root": {
+          "background": {
+            "color": {
+              "field": "result",
+              "fixed": "transparent"
+            },
+            "image": {
+              "field": "result",
+              "fixed": "",
+              "mode": "field"
+            },
+            "size": "cover"
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            },
+            "width": 0
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "this_week",
+                  "mode": "field"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "this_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "This Week:",
+              "placement": {
+                "height": 53.984375,
+                "left": 199,
+                "top": 180,
+                "width": 93.984375
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "fixed": "This Week:"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 3",
+              "placement": {
+                "height": 83.38542175292969,
+                "left": 86,
+                "top": 164,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "field": "result",
+                  "fixed": "#D9D9D9"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "last_week",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 5",
+              "placement": {
+                "height": 46.6796875,
+                "left": 188,
+                "top": 144,
+                "width": 113.45703125
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "#d4dae1f0"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "size": "tile"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "size": 21,
+                "text": {
+                  "fixed": "% Change in User Volume"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 7",
+              "placement": {
+                "height": 70,
+                "left": 42,
+                "top": 24,
+                "width": 285.98956298828125
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 0
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "result",
+                  "fixed": "Last Week:",
+                  "mode": "fixed"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 4",
+              "placement": {
+                "height": 83.4201431274414,
+                "left": 86,
+                "top": 125,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "fill": {
+                  "fixed": "#D9D9D9"
+                },
+                "path": {
+                  "fixed": "img/icons/unicons/equal-mathematical-sign.svg",
+                  "mode": "fixed"
+                }
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 6",
+              "placement": {
+                "height": 135.99609375,
+                "left": 286,
+                "top": 116,
+                "width": 55.99609375
+              },
+              "type": "icon"
+            }
+          ],
+          "name": "Element 1699338622230",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  (ABS((SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:07:08.000'\n        AND created_date < '2023-10-24 06:18:00.000') -\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:18:00.000'\n        AND created_date < '2023-10-24 06:36:00.000')) * 100 /\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:07:00.000'\n        AND created_date < '2023-10-24 06:44:00.000')) AS last_week,\n  (ABS((SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:36:08.000'\n        AND created_date < '2023-10-24 06:45:00.000') -\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:45:00.000'\n        AND created_date < '2023-10-24 06:59:00.000')) * 100 /\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:36:00.000'\n        AND created_date < '2023-10-24 06:59:00.000')) AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "canvas"
+    },
+    {
+      "datasource": {
+        "type": "jaeger",
+        "uid": "d935806c-69da-4604-a8cb-d6832aeef33e"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "light-blue",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "from": -100,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": -1
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 1,
+                "result": {
+                  "color": "green",
+                  "index": 2
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 14,
+        "y": 25
+      },
+      "id": 21,
+      "links": [],
+      "options": {
+        "inlineEditing": true,
+        "root": {
+          "background": {
+            "color": {
+              "field": "duration",
+              "fixed": "transparent"
+            },
+            "image": {
+              "field": "result",
+              "fixed": "",
+              "mode": "field"
+            },
+            "size": "cover"
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            },
+            "width": 0
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "field": "duration",
+                  "fixed": "#D9D9D9"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "duration",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "This Week:",
+              "placement": {
+                "height": 53.97916793823242,
+                "left": 211,
+                "top": 180,
+                "width": 93.97917175292969
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "fixed": "This Week:"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 3",
+              "placement": {
+                "height": 83.38542175292969,
+                "left": 86,
+                "top": 164,
+                "width": 166.87501525878906
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "field": "duration",
+                  "fixed": "#D9D9D9"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "duration",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 5",
+              "placement": {
+                "height": 46.66666793823242,
+                "left": 201,
+                "top": 141,
+                "width": 113.45833587646484
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "#d4dae1f0"
+                },
+                "image": {
+                  "field": "",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "size": "tile"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "size": 21,
+                "text": {
+                  "fixed": "Performance (Response Time)"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 7",
+              "placement": {
+                "height": 70,
+                "left": 42,
+                "top": 24,
+                "width": 285.984375
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 0
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "size": 20,
+                "text": {
+                  "field": "result",
+                  "fixed": "Last Week:",
+                  "mode": "fixed"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 4",
+              "placement": {
+                "height": 83.39583587646484,
+                "left": 82,
+                "top": 124,
+                "width": 166.875
+              },
+              "type": "text"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "fill": {
+                  "fixed": "#D9D9D9"
+                },
+                "path": {
+                  "fixed": "img/icons/unicons/equal-mathematical-sign.svg",
+                  "mode": "fixed"
+                }
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "name": "Element 6",
+              "placement": {
+                "height": 121,
+                "left": 320,
+                "top": 124,
+                "width": 64
+              },
+              "type": "icon"
+            }
+          ],
+          "name": "Element 1699338622230",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "d935806c-69da-4604-a8cb-d6832aeef33e"
+          },
+          "query": "693c40972d22f8f9",
+          "queryType": "search",
+          "refId": "A",
+          "service": "tracing"
+        }
+      ],
+      "type": "canvas"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "Sprint 1",
+            "Sprint 2",
+            "Sprint 3",
+            "Sprint 4",
+            "Sprint 5",
+            "Sprint 6",
+            "Sprint 7",
+            "Sprint 8",
+            "Sprint 9"
+          ],
+          "value": [
+            "2023-08-28 00:00:00.000 - 2023-09-15 23:59:59.999",
+            "2023-09-16 00:00:00.000 - 2023-09-29 23:59:59.999",
+            "2023-09-30 00:00:00.000 - 2023-10-16 23:59:59.999",
+            "2023-10-17 00:00:00.000 - 2023-10-27 23:59:59.999",
+            "2023-10-28 00:00:00.000 - 2023-11-12 23:59:59.999",
+            "2023-11-13 00:00:00.000 - 2023-11-23 23:59:59.999",
+            "2023-11-24 00:00:00.000 - 2023-12-06 23:59:59.999",
+            "2023-12-05 00:00:00.000 - 2023-12-22 23:59:59.999",
+            "2023-12-18 00:00:00.000 - 2024-01-02 23:59:59.999"
+          ]
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": true,
+        "name": "Sprint",
+        "options": [
+          {
+            "selected": true,
+            "text": "Sprint 1",
+            "value": "2023-08-28 00:00:00.000 - 2023-09-15 23:59:59.999"
+          },
+          {
+            "selected": true,
+            "text": "Sprint 2",
+            "value": "2023-09-16 00:00:00.000 - 2023-09-29 23:59:59.999"
+          },
+          {
+            "selected": true,
+            "text": "Sprint 3",
+            "value": "2023-09-30 00:00:00.000 - 2023-10-16 23:59:59.999"
+          },
+          {
+            "selected": true,
+            "text": "Sprint 4",
+            "value": "2023-10-17 00:00:00.000 - 2023-10-27 23:59:59.999"
+          },
+          {
+            "selected": true,
+            "text": "Sprint 5",
+            "value": "2023-10-28 00:00:00.000 - 2023-11-12 23:59:59.999"
+          },
+          {
+            "selected": true,
+            "text": "Sprint 6",
+            "value": "2023-11-13 00:00:00.000 - 2023-11-23 23:59:59.999"
+          },
+          {
+            "selected": true,
+            "text": "Sprint 7",
+            "value": "2023-11-24 00:00:00.000 - 2023-12-06 23:59:59.999"
+          },
+          {
+            "selected": true,
+            "text": "Sprint 8",
+            "value": "2023-12-05 00:00:00.000 - 2023-12-22 23:59:59.999"
+          },
+          {
+            "selected": true,
+            "text": "Sprint 9",
+            "value": "2023-12-18 00:00:00.000 - 2024-01-02 23:59:59.999"
+          }
+        ],
+        "query": "Sprint 1 : 2023-08-28 00:00:00.000 - 2023-09-15 23:59:59.999 , Sprint 2 : 2023-09-16 00:00:00.000 - 2023-09-29 23:59:59.999 , Sprint 3 : 2023-09-30 00:00:00.000 - 2023-10-16 23:59:59.999 , Sprint 4 : 2023-10-17 00:00:00.000 - 2023-10-27 23:59:59.999 , Sprint 5 : 2023-10-28 00:00:00.000 - 2023-11-12 23:59:59.999 , Sprint 6 : 2023-11-13 00:00:00.000 - 2023-11-23 23:59:59.999 , Sprint 7 : 2023-11-24 00:00:00.000 - 2023-12-06 23:59:59.999 , Sprint 8 : 2023-12-05 00:00:00.000 - 2023-12-22 23:59:59.999 , Sprint 9 : 2023-12-18 00:00:00.000 - 2024-01-02 23:59:59.999",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "Asia/Kolkata",
+  "title": "DevSecOps",
+  "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e0",
+  "version": 8,
+  "weekStart": ""
+}
