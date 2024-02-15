@@ -31,12 +31,175 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "palette-classic"
           },
-          "displayName": "${Sprint:text}",
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "No. of Builds",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "mappings": [],
-          "max": 1200000,
-          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "successful_build_count"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "failed_build_count"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 0,
+        "y": 0
+      },
+      "id": 9,
+      "links": [],
+      "options": {
+        "barRadius": 0.2,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  DATE_ADD(date(finished_date), INTERVAL -DAYOFMONTH(date(finished_date))+1 DAY) as time,\n  count(distinct case when result = 'SUCCESS' then id else null end) as successful_build_count,\n  count(distinct case when result != 'SUCCESS' then id else null end) as failed_build_count\nFROM cicd_pipelines\nWHERE\n  -- $__timeFilter(finished_date)\n   id like \"%jenkins%\"\n\n  -- the following condition will remove the month with incomplete data\n  -- and finished_date >= DATE_ADD(DATE_ADD($__timeFrom(), INTERVAL -DAY($__timeFrom())+1 DAY), INTERVAL +1 MONTH)\nGROUP BY 1",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Deployment Frequency",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "Number of builds executed in the selected time range",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-green",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": true,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "LOC Changed",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -52,32 +215,37 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 2.6666666666666665,
-        "x": 0,
+        "w": 16,
+        "x": 7,
         "y": 0
       },
       "id": 7,
       "links": [],
-      "maxPerRow": 12,
       "options": {
-        "displayMode": "gradient",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/.*/",
-          "values": false
+        "barRadius": 0.2,
+        "barWidth": 0.7,
+        "fullHighlight": true,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
-        "showUnfilled": true,
-        "text": {},
-        "valueMode": "color"
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 100
       },
       "pluginVersion": "9.5.2",
-      "repeat": "Sprint",
-      "repeatDirection": "h",
       "targets": [
         {
           "datasource": {
@@ -87,7 +255,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT SUM(additions) - SUM(deletions) \nFROM commits\nWHERE committed_date BETWEEN \n    STR_TO_DATE(SUBSTRING_INDEX($Sprint, ' - ', 1), '%Y-%m-%d %H:%i:%s') \n    AND \n    STR_TO_DATE(SUBSTRING_INDEX($Sprint, ' - ', -1), '%Y-%m-%d %H:%i:%s');\n",
+          "rawSql": "SELECT\n  DATE_ADD(date(committed_date), INTERVAL -DAYOFMONTH(date(committed_date))+1 DAY) as time,\n  SUM(additions) - SUM(deletions) as LOC\nFROM commits\n-- WHERE\n  -- $__timeFilter(committed_date)\n\n  -- the following condition will remove the month with incomplete data\n  -- and finished_date >= DATE_ADD(DATE_ADD($__timeFrom(), INTERVAL -DAY($__timeFrom())+1 DAY), INTERVAL +1 MONTH)\nGROUP BY 1",
           "refId": "A",
           "sql": {
             "columns": [
@@ -110,7 +278,7 @@
       ],
       "title": "Change Volume",
       "transparent": true,
-      "type": "bargauge"
+      "type": "barchart"
     },
     {
       "datasource": {
@@ -126,10 +294,19 @@
           "mappings": [
             {
               "options": {
+                "0": {
+                  "color": "light-blue",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
                 "from": -100,
                 "result": {
                   "color": "red",
-                  "index": 0
+                  "index": 1
                 },
                 "to": -1
               },
@@ -140,7 +317,7 @@
                 "from": 1,
                 "result": {
                   "color": "green",
-                  "index": 1
+                  "index": 2
                 },
                 "to": 100
               },
@@ -169,7 +346,7 @@
         "x": 0,
         "y": 9
       },
-      "id": 9,
+      "id": 18,
       "links": [],
       "options": {
         "inlineEditing": true,
@@ -313,10 +490,10 @@
               },
               "name": "Element 5",
               "placement": {
-                "height": 46.68402862548828,
+                "height": 46.6796875,
                 "left": 186,
                 "top": 142,
-                "width": 113.4721908569336
+                "width": 113.45703125
               },
               "type": "metric-value"
             },
@@ -344,7 +521,7 @@
                 },
                 "size": 21,
                 "text": {
-                  "fixed": "Deployment Frequency"
+                  "fixed": "% Failed Deployments"
                 },
                 "valign": "middle"
               },
@@ -357,7 +534,7 @@
                 "height": 70,
                 "left": 42,
                 "top": 24,
-                "width": 285.9895935058594
+                "width": 285.98956298828125
               },
               "type": "text"
             },
@@ -393,10 +570,10 @@
               },
               "name": "Element 4",
               "placement": {
-                "height": 83.4201431274414,
+                "height": 83.41796875,
                 "left": 86,
                 "top": 125,
-                "width": 166.87501525878906
+                "width": 166.875
               },
               "type": "text"
             },
@@ -426,9 +603,9 @@
               },
               "name": "Element 6",
               "placement": {
-                "height": 100,
-                "left": 275,
-                "top": 133,
+                "height": 99.99998474121094,
+                "left": 295,
+                "top": 136,
                 "width": 100
               },
               "type": "icon"
@@ -455,7 +632,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  (SELECT COUNT(*) FROM cicd_pipelines WHERE created_date >= '2023-09-30 00:00:00.000' AND created_date < '2023-10-03 00:00:00.000' AND result = 'SUCCESS' AND id LIKE \"%jenkins%\") AS last_week,\n  (SELECT COUNT(*) FROM cicd_pipelines WHERE created_date >= '2023-10-04 00:00:00.000' AND created_date < '2023-10-10 00:00:00.000' AND result = 'SUCCESS' AND id LIKE \"%jenkins%\") AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
+          "rawSql": "SELECT\n    (SELECT (SUM(CASE WHEN result = 'FAILURE' AND id LIKE '%jenkins%' THEN 1 ELSE 0 END) / COUNT(*)) * 100\n     FROM cicd_pipelines\n     WHERE created_date >= '2023-09-30 00:00:00.000' AND created_date < '2023-10-05 00:00:00.000') AS last_week,\n    \n    (SELECT (SUM(CASE WHEN result = 'FAILURE' AND id LIKE '%jenkins%' THEN 1 ELSE 0 END) / COUNT(*)) * 100\n     FROM cicd_pipelines\n     WHERE created_date >= '2023-09-01 00:00:00.000' AND created_date < '2023-10-10 00:00:00.000') AS this_week,\n\n    (SELECT (last_week - this_week)) AS result;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1276,7 +1453,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1288,12 +1466,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 5,
         "w": 7,
         "x": 0,
         "y": 17
       },
-      "id": 18,
+      "id": 19,
       "links": [],
       "options": {
         "inlineEditing": true,
@@ -1357,10 +1535,10 @@
               },
               "name": "This Week:",
               "placement": {
-                "height": 53.99305725097656,
-                "left": 195,
+                "height": 53.984375,
+                "left": 199,
                 "top": 180,
-                "width": 93.99302673339844
+                "width": 93.984375
               },
               "type": "metric-value"
             },
@@ -1438,8 +1616,8 @@
               "name": "Element 5",
               "placement": {
                 "height": 46.6796875,
-                "left": 186,
-                "top": 142,
+                "left": 188,
+                "top": 144,
                 "width": 113.45703125
               },
               "type": "metric-value"
@@ -1468,7 +1646,7 @@
                 },
                 "size": 21,
                 "text": {
-                  "fixed": "% Failed Deployments"
+                  "fixed": "% Change in User Volume"
                 },
                 "valign": "middle"
               },
@@ -1517,10 +1695,10 @@
               },
               "name": "Element 4",
               "placement": {
-                "height": 83.41796875,
+                "height": 83.4201431274414,
                 "left": 86,
                 "top": 125,
-                "width": 166.875
+                "width": 166.87501525878906
               },
               "type": "text"
             },
@@ -1540,7 +1718,7 @@
                   "fixed": "#D9D9D9"
                 },
                 "path": {
-                  "fixed": "img/icons/unicons/arrow-up.svg",
+                  "fixed": "img/icons/unicons/equal-mathematical-sign.svg",
                   "mode": "fixed"
                 }
               },
@@ -1550,10 +1728,10 @@
               },
               "name": "Element 6",
               "placement": {
-                "height": 99.99998474121094,
-                "left": 295,
-                "top": 136,
-                "width": 100
+                "height": 135.99609375,
+                "left": 286,
+                "top": 116,
+                "width": 55.99609375
               },
               "type": "icon"
             }
@@ -1579,7 +1757,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n    (SELECT (SUM(CASE WHEN result = 'FAILURE' AND id LIKE '%jenkins%' THEN 1 ELSE 0 END) / COUNT(*)) * 100\n     FROM cicd_pipelines\n     WHERE created_date >= '2023-09-30 00:00:00.000' AND created_date < '2023-10-05 00:00:00.000') AS last_week,\n    \n    (SELECT (SUM(CASE WHEN result = 'FAILURE' AND id LIKE '%jenkins%' THEN 1 ELSE 0 END) / COUNT(*)) * 100\n     FROM cicd_pipelines\n     WHERE created_date >= '2023-09-01 00:00:00.000' AND created_date < '2023-10-10 00:00:00.000') AS this_week,\n\n    (SELECT (last_week - this_week)) AS result;\n",
+          "rawSql": "SELECT\n  (ABS((SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:07:08.000'\n        AND created_date < '2023-10-24 06:18:00.000') -\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:18:00.000'\n        AND created_date < '2023-10-24 06:36:00.000')) * 100 /\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:07:00.000'\n        AND created_date < '2023-10-24 06:44:00.000')) AS last_week,\n  (ABS((SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:36:08.000'\n        AND created_date < '2023-10-24 06:45:00.000') -\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:45:00.000'\n        AND created_date < '2023-10-24 06:59:00.000')) * 100 /\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:36:00.000'\n        AND created_date < '2023-10-24 06:59:00.000')) AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1650,7 +1828,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1663,8 +1842,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 7,
-        "x": 7,
+        "w": 5,
+        "x": 11,
         "y": 17
       },
       "id": 20,
@@ -2011,7 +2190,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2025,7 +2205,7 @@
       "gridPos": {
         "h": 8,
         "w": 7,
-        "x": 14,
+        "x": 16,
         "y": 17
       },
       "id": 17,
@@ -2339,380 +2519,6 @@
     },
     {
       "datasource": {
-        "type": "mysql",
-        "uid": "P430005175C4C7810"
-      },
-      "description": "Number of builds executed in the selected time range",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "light-blue",
-                  "index": 0
-                }
-              },
-              "type": "value"
-            },
-            {
-              "options": {
-                "from": -100,
-                "result": {
-                  "color": "red",
-                  "index": 1
-                },
-                "to": -1
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 100
-              },
-              "type": "range"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 0,
-        "y": 25
-      },
-      "id": 19,
-      "links": [],
-      "options": {
-        "inlineEditing": true,
-        "root": {
-          "background": {
-            "color": {
-              "field": "result",
-              "fixed": "transparent"
-            },
-            "image": {
-              "field": "result",
-              "fixed": "",
-              "mode": "field"
-            },
-            "size": "cover"
-          },
-          "border": {
-            "color": {
-              "fixed": "dark-green"
-            },
-            "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
-          },
-          "elements": [
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "this_week",
-                  "mode": "field"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "this_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "This Week:",
-              "placement": {
-                "height": 53.984375,
-                "left": 199,
-                "top": 180,
-                "width": 93.984375
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "fixed": "This Week:"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 3",
-              "placement": {
-                "height": 83.38542175292969,
-                "left": 86,
-                "top": 164,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "last_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 5",
-              "placement": {
-                "height": 46.6796875,
-                "left": 188,
-                "top": 144,
-                "width": 113.45703125
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "#d4dae1f0"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                },
-                "size": "tile"
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#000000"
-                },
-                "size": 21,
-                "text": {
-                  "fixed": "% Change in User Volume"
-                },
-                "valign": "middle"
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 7",
-              "placement": {
-                "height": 70,
-                "left": 42,
-                "top": 24,
-                "width": 285.98956298828125
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                },
-                "width": 0
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "result",
-                  "fixed": "Last Week:",
-                  "mode": "fixed"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 4",
-              "placement": {
-                "height": 83.4201431274414,
-                "left": 86,
-                "top": 125,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "fill": {
-                  "fixed": "#D9D9D9"
-                },
-                "path": {
-                  "fixed": "img/icons/unicons/equal-mathematical-sign.svg",
-                  "mode": "fixed"
-                }
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 6",
-              "placement": {
-                "height": 135.99609375,
-                "left": 286,
-                "top": 116,
-                "width": 55.99609375
-              },
-              "type": "icon"
-            }
-          ],
-          "name": "Element 1699338622230",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "top": 0,
-            "width": 100
-          },
-          "type": "frame"
-        },
-        "showAdvancedTypes": true
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P430005175C4C7810"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  (ABS((SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:07:08.000'\n        AND created_date < '2023-10-24 06:18:00.000') -\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:18:00.000'\n        AND created_date < '2023-10-24 06:36:00.000')) * 100 /\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:07:00.000'\n        AND created_date < '2023-10-24 06:44:00.000')) AS last_week,\n  (ABS((SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:36:08.000'\n        AND created_date < '2023-10-24 06:45:00.000') -\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:45:00.000'\n        AND created_date < '2023-10-24 06:59:00.000')) * 100 /\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:36:00.000'\n        AND created_date < '2023-10-24 06:59:00.000')) AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "type": "canvas"
-    },
-    {
-      "datasource": {
         "type": "jaeger",
         "uid": "d935806c-69da-4604-a8cb-d6832aeef33e"
       },
@@ -2759,7 +2565,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2773,8 +2580,8 @@
       "gridPos": {
         "h": 8,
         "w": 7,
-        "x": 14,
-        "y": 25
+        "x": 4,
+        "y": 22
       },
       "id": 21,
       "links": [],
@@ -3059,7 +2866,7 @@
       "type": "canvas"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -3067,29 +2874,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": [
-            "Sprint 1",
-            "Sprint 2",
-            "Sprint 3",
-            "Sprint 4",
-            "Sprint 5",
-            "Sprint 6",
-            "Sprint 7",
-            "Sprint 8",
-            "Sprint 9"
-          ],
-          "value": [
-            "2023-08-28 00:00:00.000 - 2023-09-15 23:59:59.999",
-            "2023-09-16 00:00:00.000 - 2023-09-29 23:59:59.999",
-            "2023-09-30 00:00:00.000 - 2023-10-16 23:59:59.999",
-            "2023-10-17 00:00:00.000 - 2023-10-27 23:59:59.999",
-            "2023-10-28 00:00:00.000 - 2023-11-12 23:59:59.999",
-            "2023-11-13 00:00:00.000 - 2023-11-23 23:59:59.999",
-            "2023-11-24 00:00:00.000 - 2023-12-06 23:59:59.999",
-            "2023-12-05 00:00:00.000 - 2023-12-22 23:59:59.999",
-            "2023-12-18 00:00:00.000 - 2024-01-02 23:59:59.999"
-          ]
+          "selected": true,
+          "text": [],
+          "value": []
         },
         "hide": 0,
         "includeAll": false,
@@ -3097,47 +2884,47 @@
         "name": "Sprint",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 1",
             "value": "2023-08-28 00:00:00.000 - 2023-09-15 23:59:59.999"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 2",
             "value": "2023-09-16 00:00:00.000 - 2023-09-29 23:59:59.999"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 3",
             "value": "2023-09-30 00:00:00.000 - 2023-10-16 23:59:59.999"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 4",
             "value": "2023-10-17 00:00:00.000 - 2023-10-27 23:59:59.999"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 5",
             "value": "2023-10-28 00:00:00.000 - 2023-11-12 23:59:59.999"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 6",
             "value": "2023-11-13 00:00:00.000 - 2023-11-23 23:59:59.999"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 7",
             "value": "2023-11-24 00:00:00.000 - 2023-12-06 23:59:59.999"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 8",
             "value": "2023-12-05 00:00:00.000 - 2023-12-22 23:59:59.999"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Sprint 9",
             "value": "2023-12-18 00:00:00.000 - 2024-01-02 23:59:59.999"
           }
@@ -3150,13 +2937,13 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-6M",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "Asia/Kolkata",
   "title": "DevSecOps",
   "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e0",
-  "version": 8,
+  "version": 3,
   "weekStart": ""
 }
