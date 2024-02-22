@@ -82,6 +82,10 @@
                   "fixedColor": "green",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Success"
               }
             ]
           },
@@ -97,6 +101,10 @@
                   "fixedColor": "red",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Failed"
               }
             ]
           }
@@ -104,7 +112,7 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 7,
+        "w": 8,
         "x": 0,
         "y": 0
       },
@@ -141,7 +149,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  DATE_ADD(date(finished_date), INTERVAL -DAYOFMONTH(date(finished_date))+1 DAY) as time,\n  count(distinct case when result = 'SUCCESS' then id else null end) as successful_build_count,\n  count(distinct case when result != 'SUCCESS' then id else null end) as failed_build_count\nFROM cicd_pipelines\nWHERE\n  -- $__timeFilter(finished_date)\n   id like \"%jenkins%\"\n\n  -- the following condition will remove the month with incomplete data\n  -- and finished_date >= DATE_ADD(DATE_ADD($__timeFrom(), INTERVAL -DAY($__timeFrom())+1 DAY), INTERVAL +1 MONTH)\nGROUP BY 1",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.successful_build_count, 0) as successful_build_count,\n  COALESCE(cd.failed_build_count, 0) as failed_build_count\nFROM (\n  SELECT 'Sprint 8' as time1\n  UNION\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1 -- Corrected alias to match with 'Sprint 10'\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    count(distinct case when result = 'SUCCESS' then id else null end) as successful_build_count,\n    count(distinct case when result != 'SUCCESS' then id else null end) as failed_build_count\n  FROM (\n    SELECT\n      'Sprint 8' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2023-12-05 00:00:00.000' AND\n      finished_date <= '2023-12-22 23:59:59.999'\n  \n    UNION ALL\n  \n    SELECT\n      'Sprint 9' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2023-12-18 00:00:00.000' AND\n      finished_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2024-01-08 00:00:00.000' AND\n      finished_date <= '2024-02-05 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -183,7 +191,7 @@
             "axisColorMode": "text",
             "axisGridShow": false,
             "axisLabel": "LOC Changed",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "fillOpacity": 80,
             "gradientMode": "hue",
             "hideFrom": {
@@ -199,6 +207,7 @@
               "mode": "off"
             }
           },
+          "displayName": "Lines of Code Changed",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -215,8 +224,8 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 16,
-        "x": 7,
+        "w": 8,
+        "x": 8,
         "y": 0
       },
       "id": 7,
@@ -230,7 +239,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "orientation": "auto",
         "showValue": "always",
@@ -243,7 +252,7 @@
           "sort": "none"
         },
         "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 100
+        "xTickLabelSpacing": 0
       },
       "pluginVersion": "9.5.2",
       "targets": [
@@ -255,7 +264,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  DATE_ADD(date(committed_date), INTERVAL -DAYOFMONTH(date(committed_date))+1 DAY) as time,\n  SUM(additions) - SUM(deletions) as LOC\nFROM commits\n-- WHERE\n  -- $__timeFilter(committed_date)\n\n  -- the following condition will remove the month with incomplete data\n  -- and finished_date >= DATE_ADD(DATE_ADD($__timeFrom(), INTERVAL -DAY($__timeFrom())+1 DAY), INTERVAL +1 MONTH)\nGROUP BY 1",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.lines_of_code_changed, 0) as lines_of_code_changed\nFROM (\n  SELECT 'Sprint 8' as time1\n  UNION\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    SUM(additions) - SUM(deletions) as lines_of_code_changed\n  FROM (\n    SELECT\n      'Sprint 8' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2023-12-05 00:00:00.000' AND\n      committed_date <= '2023-12-22 23:59:59.999'\n  \n    UNION ALL\n  \n    SELECT\n      'Sprint 9' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2023-12-18 00:00:00.000' AND\n      committed_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2024-01-08 00:00:00.000' AND\n      committed_date <= '2024-02-05 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -289,51 +298,37 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "light-blue",
-                  "index": 0
-                }
-              },
-              "type": "value"
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "Issues",
+            "axisPlacement": "left",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            {
-              "options": {
-                "from": -100,
-                "result": {
-                  "color": "red",
-                  "index": 1
-                },
-                "to": -1
-              },
-              "type": "range"
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
             },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 100
-              },
-              "type": "range"
+            "thresholdsStyle": {
+              "mode": "off"
             }
-          ],
+          },
+          "displayName": "Number of Issues",
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -341,286 +336,36 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 0,
-        "y": 9
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 0
       },
-      "id": 18,
+      "id": 17,
       "links": [],
       "options": {
-        "inlineEditing": true,
-        "root": {
-          "background": {
-            "color": {
-              "field": "result",
-              "fixed": "transparent"
-            },
-            "image": {
-              "field": "result",
-              "fixed": "",
-              "mode": "field"
-            },
-            "size": "cover"
-          },
-          "border": {
-            "color": {
-              "fixed": "dark-green"
-            },
-            "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
-          },
-          "elements": [
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "this_week",
-                  "mode": "field"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "this_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "This Week:",
-              "placement": {
-                "height": 53.99305725097656,
-                "left": 195,
-                "top": 180,
-                "width": 93.99302673339844
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "fixed": "This Week:"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 3",
-              "placement": {
-                "height": 83.38542175292969,
-                "left": 86,
-                "top": 164,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "last_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 5",
-              "placement": {
-                "height": 46.6796875,
-                "left": 186,
-                "top": 142,
-                "width": 113.45703125
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "#d4dae1f0"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                },
-                "size": "tile"
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#000000"
-                },
-                "size": 21,
-                "text": {
-                  "fixed": "% Failed Deployments"
-                },
-                "valign": "middle"
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 7",
-              "placement": {
-                "height": 70,
-                "left": 42,
-                "top": 24,
-                "width": 285.98956298828125
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                },
-                "width": 0
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "result",
-                  "fixed": "Last Week:",
-                  "mode": "fixed"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 4",
-              "placement": {
-                "height": 83.41796875,
-                "left": 86,
-                "top": 125,
-                "width": 166.875
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "fill": {
-                  "fixed": "#D9D9D9"
-                },
-                "path": {
-                  "fixed": "img/icons/unicons/arrow-up.svg",
-                  "mode": "fixed"
-                }
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 6",
-              "placement": {
-                "height": 99.99998474121094,
-                "left": 295,
-                "top": 136,
-                "width": 100
-              },
-              "type": "icon"
-            }
-          ],
-          "name": "Element 1699338622230",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "top": 0,
-            "width": 100
-          },
-          "type": "frame"
+        "barRadius": 0.2,
+        "barWidth": 0.7,
+        "fullHighlight": true,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showAdvancedTypes": true
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "pluginVersion": "9.5.2",
       "targets": [
@@ -632,7 +377,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n    (SELECT (SUM(CASE WHEN result = 'FAILURE' AND id LIKE '%jenkins%' THEN 1 ELSE 0 END) / COUNT(*)) * 100\n     FROM cicd_pipelines\n     WHERE created_date >= '2023-09-30 00:00:00.000' AND created_date < '2023-10-05 00:00:00.000') AS last_week,\n    \n    (SELECT (SUM(CASE WHEN result = 'FAILURE' AND id LIKE '%jenkins%' THEN 1 ELSE 0 END) / COUNT(*)) * 100\n     FROM cicd_pipelines\n     WHERE created_date >= '2023-09-01 00:00:00.000' AND created_date < '2023-10-10 00:00:00.000') AS this_week,\n\n    (SELECT (last_week - this_week)) AS result;\n",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.number_of_issues, 0) as number_of_issues\nFROM (\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    count(*) as number_of_issues\n  FROM (\n    SELECT\n      'Sprint 9' as time1\n    FROM issues\n    WHERE\n      created_date >= '2023-12-18 00:00:00.000' AND\n      created_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1\n    FROM issues\n    WHERE\n      created_date >= '2024-02-12 00:00:00.000' AND\n      created_date <= '2024-02-24 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -653,7 +398,9 @@
           }
         }
       ],
-      "type": "canvas"
+      "title": "Ticket Volume",
+      "transparent": true,
+      "type": "barchart"
     },
     {
       "datasource": {
@@ -664,41 +411,31 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "light-blue",
-                  "index": 1
-                }
-              },
-              "type": "value"
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "Minutes",
+            "axisPlacement": "left",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            {
-              "options": {
-                "from": -100,
-                "result": {
-                  "color": "red",
-                  "index": 0
-                },
-                "to": -1
-              },
-              "type": "range"
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
             },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 100
-              },
-              "type": "range"
+            "thresholdsStyle": {
+              "mode": "off"
             }
-          ],
+          },
+          "displayName": "Mean Time to Recovery [min]",
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -716,286 +453,36 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 7,
+        "h": 9,
+        "w": 8,
+        "x": 0,
         "y": 9
       },
       "id": 16,
       "links": [],
       "options": {
-        "inlineEditing": true,
-        "root": {
-          "background": {
-            "color": {
-              "field": "result",
-              "fixed": "transparent"
-            },
-            "image": {
-              "field": "result",
-              "fixed": "",
-              "mode": "field"
-            },
-            "size": "cover"
-          },
-          "border": {
-            "color": {
-              "fixed": "dark-green"
-            },
-            "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
-          },
-          "elements": [
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "this_week",
-                  "mode": "field"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "this_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "This Week:",
-              "placement": {
-                "height": 53.99305725097656,
-                "left": 195,
-                "top": 180,
-                "width": 93.99302673339844
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "fixed": "This Week:"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 3",
-              "placement": {
-                "height": 83.38542175292969,
-                "left": 86,
-                "top": 164,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "last_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 5",
-              "placement": {
-                "height": 46.68402862548828,
-                "left": 186,
-                "top": 142,
-                "width": 113.4721908569336
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "#d4dae1f0"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                },
-                "size": "tile"
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#000000"
-                },
-                "size": 21,
-                "text": {
-                  "fixed": "Mean Time to Recovery"
-                },
-                "valign": "middle"
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 7",
-              "placement": {
-                "height": 70,
-                "left": 42,
-                "top": 24,
-                "width": 285.9895935058594
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                },
-                "width": 0
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "result",
-                  "fixed": "Last Week:",
-                  "mode": "fixed"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 4",
-              "placement": {
-                "height": 83.4201431274414,
-                "left": 86,
-                "top": 125,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "fill": {
-                  "fixed": "#D9D9D9"
-                },
-                "path": {
-                  "fixed": "img/icons/unicons/arrow-down.svg",
-                  "mode": "fixed"
-                }
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 6",
-              "placement": {
-                "height": 100,
-                "left": 288,
-                "top": 127,
-                "width": 100.00001525878906
-              },
-              "type": "icon"
-            }
-          ],
-          "name": "Element 1699338622230",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "top": 0,
-            "width": 100
-          },
-          "type": "frame"
+        "barRadius": 0.2,
+        "barWidth": 0.7,
+        "fullHighlight": true,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showAdvancedTypes": true
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "pluginVersion": "9.5.2",
       "targets": [
@@ -1007,7 +494,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n    (SELECT AVG(TIMESTAMPDIFF(MINUTE, created_date, resolution_date))\n    FROM\n    issues\n    WHERE\n    resolution_date IS NOT NULL\n    AND created_date >= '2023-10-09 06:07:08.000'\n    AND created_date < '2023-10-24 06:36:00.000') AS last_week,\n\n    (SELECT AVG(TIMESTAMPDIFF(MINUTE, created_date, resolution_date))\n    FROM\n    issues\n    WHERE\n    resolution_date IS NOT NULL\n    AND created_date >= '2023-10-09 06:36:00.000'\n    AND created_date < '2023-10-24 06:59:14.794') AS this_week,\n\n    (SELECT (last_week - this_week)) AS result;",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.mean_time_to_recover_in_min, 0) as mean_time_to_recover_in_min\nFROM (\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    AVG(TIMESTAMPDIFF(MINUTE, created_date, resolution_date)) / 60 AS mean_time_to_recover_in_min\n  FROM (\n    SELECT\n      'Sprint 9' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2023-12-18 00:00:00.000' AND\n      created_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-12 00:00:00.000' AND\n      created_date <= '2024-02-24 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1028,7 +515,94 @@
           }
         }
       ],
-      "type": "canvas"
+      "title": "Mean Time to Recovery",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "f035cb7c-dd01-423e-ac04-69caa30cbf89"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "displayName": "Up",
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 8,
+        "y": 9
+      },
+      "id": 22,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 2,
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f035cb7c-dd01-423e-ac04-69caa30cbf89"
+          },
+          "editorMode": "code",
+          "expr": "(1 - sum(kube_node_spec_unschedulable{node=~\".*\"}) / sum(kube_node_info{node=~\".*\"})) * 100",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Availability",
+      "transparent": true,
+      "type": "piechart"
     },
     {
       "datasource": {
@@ -1091,9 +665,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 14,
+        "h": 2,
+        "w": 5,
+        "x": 19,
         "y": 9
       },
       "id": 12,
@@ -1118,10 +692,6 @@
               "fixed": "dark-green"
             },
             "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
           },
           "elements": [
             {
@@ -1282,9 +852,9 @@
               "name": "Element 7",
               "placement": {
                 "height": 70,
-                "left": 42,
-                "top": 24,
-                "width": 285.9895935058594
+                "left": -8,
+                "top": -1,
+                "width": 285.984375
               },
               "type": "text"
             },
@@ -1362,12 +932,6 @@
             }
           ],
           "name": "Element 1699338622230",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "top": 0,
-            "width": 100
-          },
           "type": "frame"
         },
         "showAdvancedTypes": true
@@ -1383,1118 +947,6 @@
           "format": "table",
           "rawQuery": true,
           "rawSql": "SELECT\n  (SELECT AVG(duration_sec) FROM cicd_pipelines WHERE created_date >= '2023-09-27 00:00:00.000' AND created_date < '2023-10-03 00:00:00.000' AND result = 'SUCCESS' AND id LIKE \"%jenkins%\") AS last_week,\n  (SELECT AVG(duration_sec) FROM cicd_pipelines WHERE created_date >= '2023-10-06 00:00:00.000' AND created_date < '2023-10-10 00:00:00.000' AND result = 'SUCCESS' AND id LIKE \"%jenkins%\") AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "type": "canvas"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "P430005175C4C7810"
-      },
-      "description": "Number of builds executed in the selected time range",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "light-blue",
-                  "index": 0
-                }
-              },
-              "type": "value"
-            },
-            {
-              "options": {
-                "from": -100,
-                "result": {
-                  "color": "red",
-                  "index": 1
-                },
-                "to": -1
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 100
-              },
-              "type": "range"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 7,
-        "x": 0,
-        "y": 17
-      },
-      "id": 19,
-      "links": [],
-      "options": {
-        "inlineEditing": true,
-        "root": {
-          "background": {
-            "color": {
-              "field": "result",
-              "fixed": "transparent"
-            },
-            "image": {
-              "field": "result",
-              "fixed": "",
-              "mode": "field"
-            },
-            "size": "cover"
-          },
-          "border": {
-            "color": {
-              "fixed": "dark-green"
-            },
-            "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
-          },
-          "elements": [
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "this_week",
-                  "mode": "field"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "this_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "This Week:",
-              "placement": {
-                "height": 53.984375,
-                "left": 199,
-                "top": 180,
-                "width": 93.984375
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "fixed": "This Week:"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 3",
-              "placement": {
-                "height": 83.38542175292969,
-                "left": 86,
-                "top": 164,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "last_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 5",
-              "placement": {
-                "height": 46.6796875,
-                "left": 188,
-                "top": 144,
-                "width": 113.45703125
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "#d4dae1f0"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                },
-                "size": "tile"
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#000000"
-                },
-                "size": 21,
-                "text": {
-                  "fixed": "% Change in User Volume"
-                },
-                "valign": "middle"
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 7",
-              "placement": {
-                "height": 70,
-                "left": 42,
-                "top": 24,
-                "width": 285.98956298828125
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                },
-                "width": 0
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "result",
-                  "fixed": "Last Week:",
-                  "mode": "fixed"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 4",
-              "placement": {
-                "height": 83.4201431274414,
-                "left": 86,
-                "top": 125,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "fill": {
-                  "fixed": "#D9D9D9"
-                },
-                "path": {
-                  "fixed": "img/icons/unicons/equal-mathematical-sign.svg",
-                  "mode": "fixed"
-                }
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 6",
-              "placement": {
-                "height": 135.99609375,
-                "left": 286,
-                "top": 116,
-                "width": 55.99609375
-              },
-              "type": "icon"
-            }
-          ],
-          "name": "Element 1699338622230",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "top": 0,
-            "width": 100
-          },
-          "type": "frame"
-        },
-        "showAdvancedTypes": true
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P430005175C4C7810"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  (ABS((SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:07:08.000'\n        AND created_date < '2023-10-24 06:18:00.000') -\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:18:00.000'\n        AND created_date < '2023-10-24 06:36:00.000')) * 100 /\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:07:00.000'\n        AND created_date < '2023-10-24 06:44:00.000')) AS last_week,\n  (ABS((SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:36:08.000'\n        AND created_date < '2023-10-24 06:45:00.000') -\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:45:00.000'\n        AND created_date < '2023-10-24 06:59:00.000')) * 100 /\n       (SELECT COUNT(*)\n        FROM issues\n        WHERE created_date >= '2023-10-09 06:36:00.000'\n        AND created_date < '2023-10-24 06:59:00.000')) AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "type": "canvas"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "d0528037-0a84-40ff-aecf-ab8434a2da62"
-      },
-      "description": "Number of builds executed in the selected time range",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "light-blue",
-                  "index": 0
-                }
-              },
-              "type": "value"
-            },
-            {
-              "options": {
-                "from": -100,
-                "result": {
-                  "color": "red",
-                  "index": 1
-                },
-                "to": -1
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 100
-              },
-              "type": "range"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 11,
-        "y": 17
-      },
-      "id": 20,
-      "links": [],
-      "options": {
-        "inlineEditing": true,
-        "root": {
-          "background": {
-            "color": {
-              "field": "Value",
-              "fixed": "transparent"
-            },
-            "image": {
-              "field": "result",
-              "fixed": "",
-              "mode": "field"
-            },
-            "size": "cover"
-          },
-          "border": {
-            "color": {
-              "fixed": "dark-green"
-            },
-            "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
-          },
-          "elements": [
-            {
-              "background": {
-                "color": {
-                  "field": "Value",
-                  "fixed": "#D9D9D9"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "Value",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "This Week:",
-              "placement": {
-                "height": 53.984375,
-                "left": 195,
-                "top": 180,
-                "width": 93.984375
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "fixed": "This Week:"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 3",
-              "placement": {
-                "height": 83.38542175292969,
-                "left": 86,
-                "top": 164,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "field": "Value",
-                  "fixed": "#D9D9D9"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "Value",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 5",
-              "placement": {
-                "height": 46.6796875,
-                "left": 186,
-                "top": 142,
-                "width": 113.45703125
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "#d4dae1f0"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                },
-                "size": "tile"
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#000000"
-                },
-                "size": 21,
-                "text": {
-                  "fixed": "Availability"
-                },
-                "valign": "middle"
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 7",
-              "placement": {
-                "height": 70,
-                "left": 42,
-                "top": 24,
-                "width": 285.98956298828125
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                },
-                "width": 0
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "result",
-                  "fixed": "Last Week:",
-                  "mode": "fixed"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 4",
-              "placement": {
-                "height": 83.4201431274414,
-                "left": 86,
-                "top": 125,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "fill": {
-                  "fixed": "#D9D9D9"
-                },
-                "path": {
-                  "fixed": "img/icons/unicons/equal-mathematical-sign.svg",
-                  "mode": "fixed"
-                }
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 6",
-              "placement": {
-                "height": 157.98828125,
-                "left": 277,
-                "top": 110,
-                "width": 55.99609375
-              },
-              "type": "icon"
-            }
-          ],
-          "name": "Element 1699338622230",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "top": 0,
-            "width": 100
-          },
-          "type": "frame"
-        },
-        "showAdvancedTypes": true
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "d0528037-0a84-40ff-aecf-ab8434a2da62"
-          },
-          "editorMode": "code",
-          "expr": "avg(avg_over_time(up{instance=~\"localhost:9090\",job=~\"prometheus\"}[1h]) * 100)",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "d0528037-0a84-40ff-aecf-ab8434a2da62"
-          },
-          "editorMode": "code",
-          "expr": "avg(avg_over_time(up{instance=~\"localhost:9090\",job=~\"prometheus\"}[3h]) * 100)",
-          "hide": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "transformations": [],
-      "type": "canvas"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "P430005175C4C7810"
-      },
-      "description": "Number of builds executed in the selected time range",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "light-blue",
-                  "index": 0
-                }
-              },
-              "type": "value"
-            },
-            {
-              "options": {
-                "from": -100,
-                "result": {
-                  "color": "green",
-                  "index": 1
-                },
-                "to": -1
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "red",
-                  "index": 2
-                },
-                "to": 100
-              },
-              "type": "range"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 16,
-        "y": 17
-      },
-      "id": 17,
-      "links": [],
-      "options": {
-        "inlineEditing": true,
-        "root": {
-          "background": {
-            "color": {
-              "field": "result",
-              "fixed": "transparent"
-            },
-            "image": {
-              "field": "result",
-              "fixed": "",
-              "mode": "field"
-            },
-            "size": "cover"
-          },
-          "border": {
-            "color": {
-              "fixed": "dark-green"
-            },
-            "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
-          },
-          "elements": [
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "this_week",
-                  "mode": "field"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "this_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "This Week:",
-              "placement": {
-                "height": 53.99305725097656,
-                "left": 195,
-                "top": 180,
-                "width": 93.99302673339844
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "fixed": "This Week:"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 3",
-              "placement": {
-                "height": 83.38542175292969,
-                "left": 86,
-                "top": 164,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "field": "result",
-                  "fixed": "#D9D9D9"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "last_week",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 5",
-              "placement": {
-                "height": 46.68402862548828,
-                "left": 186,
-                "top": 142,
-                "width": 113.4721908569336
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "#d4dae1f0"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                },
-                "size": "tile"
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#000000"
-                },
-                "size": 21,
-                "text": {
-                  "fixed": "Customer Ticket Volume"
-                },
-                "valign": "middle"
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 7",
-              "placement": {
-                "height": 70,
-                "left": 42,
-                "top": 24,
-                "width": 285.98956298828125
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                },
-                "width": 0
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "result",
-                  "fixed": "Last Week:",
-                  "mode": "fixed"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 4",
-              "placement": {
-                "height": 83.4201431274414,
-                "left": 86,
-                "top": 125,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "fill": {
-                  "fixed": "#D9D9D9"
-                },
-                "path": {
-                  "fixed": "img/icons/unicons/arrow-up.svg",
-                  "mode": "fixed"
-                }
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 6",
-              "placement": {
-                "height": 100,
-                "left": 288,
-                "top": 129,
-                "width": 100.00001525878906
-              },
-              "type": "icon"
-            }
-          ],
-          "name": "Element 1699338622230",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "top": 0,
-            "width": 100
-          },
-          "type": "frame"
-        },
-        "showAdvancedTypes": true
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P430005175C4C7810"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  (SELECT COUNT(*)\n    FROM\n    issues\n    WHERE\n   created_date >= '2023-10-09 06:07:08.000'\n    AND created_date < '2023-10-24 06:36:00.000') AS last_week,\n  (SELECT COUNT(*)\n    FROM\n    issues\n    WHERE\n   created_date >= '2023-10-09 06:36:00.000'\n    AND created_date < '2023-10-24 06:59:00.000') AS this_week,\n  (SELECT (this_week - last_week)) AS result;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2578,10 +1030,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 4,
-        "y": 22
+        "h": 2,
+        "w": 6,
+        "x": 18,
+        "y": 11
       },
       "id": 21,
       "links": [],
@@ -2760,8 +1212,8 @@
               "name": "Element 7",
               "placement": {
                 "height": 70,
-                "left": 42,
-                "top": 24,
+                "left": 41,
+                "top": -4,
                 "width": 285.984375
               },
               "type": "text"
@@ -2866,7 +1318,7 @@
       "type": "canvas"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -2878,13 +1330,13 @@
           "text": [],
           "value": []
         },
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
         "multi": true,
         "name": "Sprint",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "Sprint 1",
             "value": "2023-08-28 00:00:00.000 - 2023-09-15 23:59:59.999"
           },
@@ -2937,13 +1389,13 @@
     ]
   },
   "time": {
-    "from": "now-6M",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "Asia/Kolkata",
   "title": "DevSecOps",
   "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e0",
-  "version": 3,
+  "version": 6,
   "weekStart": ""
 }
