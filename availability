@@ -1,0 +1,1 @@
+100 * (1 - sum(kube_node_spec_unschedulable{node=~".*"}) / sum(kube_node_info{node=~".*"}))
