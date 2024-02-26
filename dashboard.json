@@ -454,7 +454,7 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 9
       },
@@ -548,9 +548,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 5,
-        "x": 8,
+        "x": 6,
         "y": 9
       },
       "id": 23,
@@ -614,9 +614,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 8,
         "w": 5,
-        "x": 13,
+        "x": 11,
         "y": 9
       },
       "id": 12,
@@ -670,351 +670,92 @@
     },
     {
       "datasource": {
-        "type": "jaeger",
-        "uid": "d935806c-69da-4604-a8cb-d6832aeef33e"
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
       },
-      "description": "Number of builds executed in the selected time range",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "light-blue",
-                  "index": 0
-                }
-              },
-              "type": "value"
-            },
-            {
-              "options": {
-                "from": -100,
-                "result": {
-                  "color": "red",
-                  "index": 1
-                },
-                "to": -1
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 100
-              },
-              "type": "range"
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          },
+          "mappings": [],
+          "unit": "ms"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 2,
-        "w": 6,
-        "x": 18,
+        "h": 8,
+        "w": 8,
+        "x": 16,
         "y": 9
       },
       "id": 21,
       "links": [],
       "options": {
-        "inlineEditing": true,
-        "root": {
-          "background": {
-            "color": {
-              "field": "duration",
-              "fixed": "transparent"
-            },
-            "image": {
-              "field": "result",
-              "fixed": "",
-              "mode": "field"
-            },
-            "size": "cover"
-          },
-          "border": {
-            "color": {
-              "fixed": "dark-green"
-            },
-            "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
-          },
-          "elements": [
-            {
-              "background": {
-                "color": {
-                  "field": "duration",
-                  "fixed": "#D9D9D9"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "duration",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "This Week:",
-              "placement": {
-                "height": 53.97916793823242,
-                "left": 211,
-                "top": 180,
-                "width": 93.97917175292969
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "fixed": "This Week:"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 3",
-              "placement": {
-                "height": 83.38542175292969,
-                "left": 86,
-                "top": 164,
-                "width": 166.87501525878906
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "field": "duration",
-                  "fixed": "#D9D9D9"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "duration",
-                  "fixed": "",
-                  "mode": "field"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 5",
-              "placement": {
-                "height": 46.66666793823242,
-                "left": 201,
-                "top": 141,
-                "width": 113.45833587646484
-              },
-              "type": "metric-value"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "#d4dae1f0"
-                },
-                "image": {
-                  "field": "",
-                  "fixed": "",
-                  "mode": "fixed"
-                },
-                "size": "tile"
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#000000"
-                },
-                "size": 21,
-                "text": {
-                  "fixed": "Performance (Response Time)"
-                },
-                "valign": "middle"
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 7",
-              "placement": {
-                "height": 70,
-                "left": 41,
-                "top": -4,
-                "width": 285.984375
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                },
-                "width": 0
-              },
-              "config": {
-                "align": "center",
-                "color": {
-                  "fixed": "#ffffff"
-                },
-                "size": 20,
-                "text": {
-                  "field": "result",
-                  "fixed": "Last Week:",
-                  "mode": "fixed"
-                },
-                "valign": "middle"
-              },
-              "connections": [],
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 4",
-              "placement": {
-                "height": 83.39583587646484,
-                "left": 82,
-                "top": 124,
-                "width": 166.875
-              },
-              "type": "text"
-            },
-            {
-              "background": {
-                "color": {
-                  "fixed": "transparent"
-                }
-              },
-              "border": {
-                "color": {
-                  "fixed": "dark-green"
-                }
-              },
-              "config": {
-                "fill": {
-                  "fixed": "#D9D9D9"
-                },
-                "path": {
-                  "fixed": "img/icons/unicons/equal-mathematical-sign.svg",
-                  "mode": "fixed"
-                }
-              },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
-              "name": "Element 6",
-              "placement": {
-                "height": 121,
-                "left": 320,
-                "top": 124,
-                "width": 64
-              },
-              "type": "icon"
-            }
-          ],
-          "name": "Element 1699338622230",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "top": 0,
-            "width": 100
-          },
-          "type": "frame"
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
         },
-        "showAdvancedTypes": true
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "9.5.2",
       "targets": [
         {
           "datasource": {
-            "type": "jaeger",
-            "uid": "d935806c-69da-4604-a8cb-d6832aeef33e"
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
           },
-          "query": "693c40972d22f8f9",
-          "queryType": "search",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select * from jaeger;",
           "refId": "A",
-          "service": "tracing"
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
-      "type": "canvas"
+      "title": "Performance (Response Time)",
+      "transparent": true,
+      "type": "piechart"
     }
   ],
   "refresh": "",
@@ -1095,6 +836,6 @@
   "timezone": "Asia/Kolkata",
   "title": "DevSecOps",
   "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e0",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
