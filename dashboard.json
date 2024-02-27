@@ -179,7 +179,7 @@
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
-      "description": "Number of builds executed in the selected time range",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -187,7 +187,7 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisCenteredZero": true,
+            "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisGridShow": false,
             "axisLabel": "LOC Changed",
@@ -248,7 +248,7 @@
           "valueSize": 15
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         },
         "xTickLabelRotation": 0,
@@ -361,7 +361,7 @@
           "valueSize": 15
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         },
         "xTickLabelRotation": 0,
@@ -478,7 +478,7 @@
           "valueSize": 15
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         },
         "xTickLabelRotation": 0,
@@ -718,7 +718,7 @@
           "values": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -832,10 +832,12 @@
     "from": "now-7d",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "hidden": true
+  },
   "timezone": "Asia/Kolkata",
   "title": "DevSecOps",
   "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e0",
-  "version": 6,
+  "version": 8,
   "weekStart": ""
 }
