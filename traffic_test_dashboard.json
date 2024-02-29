@@ -466,7 +466,7 @@
         ]
       },
       "gridPos": {
-        "h": 10,
+        "h": 8,
         "w": 7,
         "x": 0,
         "y": 5
@@ -542,7 +542,28 @@
           "color": {
             "mode": "palette-classic"
           },
-          "fieldMinMax": false,
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "Number of Requests",
+            "axisPlacement": "left",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -550,10 +571,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "dark-green",
-                "value": 0
               }
             ]
           }
@@ -562,69 +579,71 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Failed_requests"
+              "options": "fail"
             },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "Failed"
-              },
               {
                 "id": "color",
                 "value": {
                   "fixedColor": "red",
                   "mode": "shades"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Fail"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Keep_Alive_requests"
+              "options": "success"
             },
             "properties": [
               {
-                "id": "displayName",
-                "value": "Success"
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "shades"
+                }
               },
               {
-                "id": "color"
+                "id": "displayName",
+                "value": "Success"
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 11,
-        "w": 5,
+        "h": 8,
+        "w": 7,
         "x": 7,
         "y": 5
       },
-      "id": 4,
+      "id": 7,
       "options": {
-        "displayMode": "gradient",
-        "maxVizHeight": 300,
-        "minVizHeight": 75,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
+        "barRadius": 0.3,
+        "barWidth": 0.64,
+        "fullHighlight": true,
+        "groupWidth": 1,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
         "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
+        "showValue": "always",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         },
-        "showUnfilled": false,
-        "sizing": "manual",
-        "text": {
-          "titleSize": 15,
-          "valueSize": 30
-        },
-        "valueMode": "text"
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
-      "pluginVersion": "10.2.3",
       "targets": [
         {
           "dataset": "intel",
@@ -635,26 +654,12 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT Failed_requests, Keep_Alive_requests FROM intel.traffic_test ",
+          "rawSql": "SELECT\r\n  'Requests' as time1,\r\n  COALESCE(Failed_requests, 0) as fail,\r\n COALESCE(Keep_Alive_requests, 0) as success\r\nFROM traffic_test\r\n\r\n",
           "refId": "A",
           "sql": {
             "columns": [
               {
-                "parameters": [
-                  {
-                    "name": "Failed_requests",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              },
-              {
-                "parameters": [
-                  {
-                    "name": "Keep_Alive_requests",
-                    "type": "functionParameter"
-                  }
-                ],
+                "parameters": [],
                 "type": "function"
               }
             ],
@@ -667,24 +672,23 @@
               }
             ],
             "limit": 50
-          },
-          "table": "traffic_test"
+          }
         }
       ],
-      "title": "Failed vs Success Requests",
+      "title": "Success vs Failed Responses",
       "transparent": true,
-      "type": "bargauge"
+      "type": "barchart"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-6h",
-    "to": "now"
+    "from": "2024-02-28T05:46:51.291Z",
+    "to": "2024-03-01T05:46:51.291Z"
   },
   "timepicker": {
     "hidden": true
@@ -692,6 +696,6 @@
   "timezone": "",
   "title": "Chaos Mesh Experiment",
   "uid": "a9493b70-89af-48ba-9867-1cd855e9d340",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
