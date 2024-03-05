@@ -417,7 +417,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisGridShow": false,
-            "axisLabel": "Minutes",
+            "axisLabel": "Hours",
             "axisPlacement": "left",
             "fillOpacity": 80,
             "gradientMode": "hue",
@@ -434,7 +434,7 @@
               "mode": "off"
             }
           },
-          "displayName": "Mean Time to Recovery [min]",
+          "displayName": "Mean Time to Recovery [H]",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -448,13 +448,14 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "m"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 9,
-        "w": 6,
+        "w": 8,
         "x": 0,
         "y": 9
       },
@@ -521,8 +522,126 @@
     },
     {
       "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "Hours",
+            "axisPlacement": "left",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "Lead Time (Dev to Deploy) [H]",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "h"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 9
+      },
+      "id": 24,
+      "links": [],
+      "options": {
+        "barRadius": 0.2,
+        "barWidth": 0.7,
+        "fullHighlight": true,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.total_hours, 0) as total_hours\nFROM (\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    ROUND(AVG(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2) as total_hours\n  FROM (\n    SELECT\n      'Sprint 9' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2023-12-18 00:00:00.000' AND\n      created_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-26 00:00:00.000' AND status = 'DONE'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Lead Time (Dev to Deploy)",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
         "type": "prometheus",
-        "uid": "fbcc797c-7d21-49aa-9bd4-9e2afbd3f71b"
+        "uid": "a2bfa1f1-f381-4ef3-9f0a-76123129c281"
       },
       "fieldConfig": {
         "defaults": {
@@ -530,7 +649,7 @@
             "fixedColor": "blue",
             "mode": "continuous-RdYlGr"
           },
-          "displayName": "Cluster Availability",
+          "displayName": "% of Cluster Available",
           "mappings": [],
           "max": 100,
           "min": 0,
@@ -549,8 +668,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 5,
-        "x": 6,
+        "w": 8,
+        "x": 16,
         "y": 9
       },
       "id": 23,
@@ -577,12 +696,11 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fbcc797c-7d21-49aa-9bd4-9e2afbd3f71b"
+            "uid": "a2bfa1f1-f381-4ef3-9f0a-76123129c281"
           },
           "editorMode": "code",
           "expr": "100 * (1 - sum(kube_node_spec_unschedulable{node=~\".*\"}) / sum(kube_node_info{node=~\".*\"}))",
-          "format": "time_series",
-          "intervalFactor": 1,
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
@@ -590,83 +708,6 @@
       "title": "Availability",
       "transparent": true,
       "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "P430005175C4C7810"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "string"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 11,
-        "y": 9
-      },
-      "id": 12,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [],
-          "fields": "/.*/",
-          "values": true
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P430005175C4C7810"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n    CONCAT(\n        IF(\n            AVG(TIMESTAMPDIFF(DAY, created_date, updated_date)) > 0,\n            CONCAT(ROUND(AVG(TIMESTAMPDIFF(DAY, created_date, updated_date))), 'Days'),\n            '0 Days '\n        ),\n        IF(\n            AVG(TIME_FORMAT(TIMEDIFF(updated_date, created_date), '%H')) > 0,\n            CONCAT(ROUND(AVG(TIME_FORMAT(TIMEDIFF(updated_date, created_date), '%H'))), 'Hours'),\n            '0 Hours '\n        ),\n        IF(\n            AVG(TIME_FORMAT(TIMEDIFF(updated_date, created_date), '%i')) > 0,\n            CONCAT(ROUND(AVG(TIME_FORMAT(TIMEDIFF(updated_date, created_date), '%i'))), ' Mins'),\n            '0 Mins'\n        )\n    ) AS 'Sprint 11'\nFROM\n    issues\nWHERE\n    created_date >= '2024-02-26 00:00:00.000' AND status = 'DONE';\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "Lead Time (Dev to Deploy)",
-      "transparent": true,
-      "type": "stat"
     },
     {
       "datasource": {
@@ -694,8 +735,8 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 16,
-        "y": 9
+        "x": 0,
+        "y": 18
       },
       "id": 21,
       "links": [],
@@ -838,6 +879,6 @@
   "timezone": "Asia/Kolkata",
   "title": "DevSecOps",
   "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e0",
-  "version": 8,
+  "version": 2,
   "weekStart": ""
 }
