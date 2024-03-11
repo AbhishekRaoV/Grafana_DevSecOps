@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 8,
+  "id": 4,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -38,7 +38,7 @@
             "axisColorMode": "text",
             "axisGridShow": false,
             "axisLabel": "No. of Builds",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "fillOpacity": 80,
             "gradientMode": "hue",
             "hideFrom": {
@@ -525,6 +525,212 @@
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
+      "description": "Time Spent on Development and Bug Fixing",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisPlacement": "left",
+            "axisWidth": 1,
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "noValue": "Loading...",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "percentage_bug"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "displayName",
+                "value": "% time on Bugs"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "percentage_requirement"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "displayName",
+                "value": "% time on Requirements"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_hours_bug"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "h"
+              },
+              {
+                "id": "displayName",
+                "value": "Hours spent on Bugs"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_hours_requirement"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "h"
+              },
+              {
+                "id": "displayName",
+                "value": "Hours spent on Requirement"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 16,
+        "x": 8,
+        "y": 9
+      },
+      "id": 27,
+      "links": [],
+      "options": {
+        "barRadius": 0.2,
+        "barWidth": 0.9,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "vertical",
+        "showValue": "always",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P430005175C4C7810"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd_bug.total_hours, 0) as total_hours_bug,\n  COALESCE(cd_requirement.total_hours, 0) as total_hours_requirement,\n  CASE\n    WHEN COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0) = 0 THEN 0\n    ELSE ROUND((COALESCE(cd_bug.total_hours, 0) / (COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0))) * 100, 2)\n  END as percentage_bug,\n  CASE\n    WHEN COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0) = 0 THEN 0\n    ELSE ROUND((COALESCE(cd_requirement.total_hours, 0) / (COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0))) * 100, 2)\n  END as percentage_requirement\n\nFROM (\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n  UNION\n  SELECT 'Sprint 12' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    COALESCE(ROUND(SUM(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2), 0) as total_hours\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-07 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n  ) AS subquery\n  GROUP BY time1\n) AS cd_bug ON sd.time1 = cd_bug.time1 OR (sd.time1 IS NULL AND cd_bug.time1 IS NULL)\nLEFT JOIN (\n  SELECT\n    time1,\n    COALESCE(ROUND(SUM(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2), 0) as total_hours\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-29 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n  ) AS subquery\n  GROUP BY time1\n) AS cd_requirement ON sd.time1 = cd_requirement.time1 OR (sd.time1 IS NULL AND cd_requirement.time1 IS NULL);\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Requirement vs Bug",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P430005175C4C7810"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -552,7 +758,7 @@
               "mode": "off"
             }
           },
-          "displayName": "Lead Time (Dev to Deploy) [H]",
+          "displayName": "Lead Time (Dev to Deploy)",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -574,8 +780,8 @@
       "gridPos": {
         "h": 9,
         "w": 8,
-        "x": 8,
-        "y": 9
+        "x": 0,
+        "y": 18
       },
       "id": 24,
       "links": [],
@@ -640,77 +846,6 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a2bfa1f1-f381-4ef3-9f0a-76123129c281"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "blue",
-            "mode": "continuous-RdYlGr"
-          },
-          "displayName": "% of Cluster Available",
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#299c46",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 9
-      },
-      "id": 23,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "text": {
-          "titleSize": 15,
-          "valueSize": 40
-        }
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "a2bfa1f1-f381-4ef3-9f0a-76123129c281"
-          },
-          "editorMode": "code",
-          "expr": "100 * (1 - sum(kube_node_spec_unschedulable{node=~\".*\"}) / sum(kube_node_info{node=~\".*\"}))",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Availability",
-      "transparent": true,
-      "type": "gauge"
-    },
-    {
-      "datasource": {
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
@@ -735,7 +870,7 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 0,
+        "x": 8,
         "y": 18
       },
       "id": 21,
@@ -797,6 +932,77 @@
       "title": "Performance (Response Time)",
       "transparent": true,
       "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "fc00c08b-0331-4fdb-bc67-03d05d585830"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "continuous-RdYlGr"
+          },
+          "displayName": "% of Cluster Available",
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 16,
+        "y": 18
+      },
+      "id": 23,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "text": {
+          "titleSize": 15,
+          "valueSize": 40
+        }
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "fc00c08b-0331-4fdb-bc67-03d05d585830"
+          },
+          "editorMode": "code",
+          "expr": "100 * (1 - sum(kube_node_spec_unschedulable{node=~\".*\"}) / sum(kube_node_info{node=~\".*\"}))",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Availability",
+      "transparent": true,
+      "type": "gauge"
     }
   ],
   "refresh": "",
@@ -879,6 +1085,6 @@
   "timezone": "Asia/Kolkata",
   "title": "DevSecOps",
   "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e0",
-  "version": 2,
+  "version": 6,
   "weekStart": ""
 }
