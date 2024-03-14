@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 9,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -149,7 +149,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.successful_build_count, 0) as successful_build_count,\n  COALESCE(cd.failed_build_count, 0) as failed_build_count\nFROM (\n  SELECT 'Sprint 8' as time1\n  UNION\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1 -- Corrected alias to match with 'Sprint 10'\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    count(distinct case when result = 'SUCCESS' then id else null end) as successful_build_count,\n    count(distinct case when result != 'SUCCESS' then id else null end) as failed_build_count\n  FROM (\n    SELECT\n      'Sprint 8' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2023-12-05 00:00:00.000' AND\n      finished_date <= '2023-12-22 23:59:59.999'\n  \n    UNION ALL\n  \n    SELECT\n      'Sprint 9' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2023-12-18 00:00:00.000' AND\n      finished_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2024-01-08 00:00:00.000' AND\n      finished_date <= '2024-02-05 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1;\n",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.successful_build_count, 0) as successful_build_count,\n  COALESCE(cd.failed_build_count, 0) as failed_build_count\nFROM (\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n  UNION\n  SELECT 'Sprint 12' as time1 -- Corrected alias to match with 'Sprint 10'\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    count(distinct case when result = 'SUCCESS' then id else null end) as successful_build_count,\n    count(distinct case when result != 'SUCCESS' then id else null end) as failed_build_count\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2024-01-08 00:00:00.000' AND\n      finished_date <= '2024-02-05 23:59:59.999'\n  \n    UNION ALL\n  \n    SELECT\n      'Sprint 11' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2024-02-19 00:00:00.000' AND\n      finished_date <= '2024-03-01 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      id,\n      result\n    FROM cicd_pipelines\n    WHERE\n      id LIKE \"%jenkins%\" AND\n      finished_date >= '2024-03-04 00:00:00.000' AND\n      finished_date <= '2024-03-15 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1;\n\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -264,7 +264,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.lines_of_code_changed, 0) as lines_of_code_changed\nFROM (\n  SELECT 'Sprint 8' as time1\n  UNION\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    SUM(additions) - SUM(deletions) as lines_of_code_changed\n  FROM (\n    SELECT\n      'Sprint 8' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2023-12-05 00:00:00.000' AND\n      committed_date <= '2023-12-22 23:59:59.999'\n  \n    UNION ALL\n  \n    SELECT\n      'Sprint 9' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2023-12-18 00:00:00.000' AND\n      committed_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2024-01-08 00:00:00.000' AND\n      committed_date <= '2024-02-05 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.lines_of_code_changed, 0) as lines_of_code_changed\nFROM (\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n  UNION\n  SELECT 'Sprint 12' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    SUM(additions) - SUM(deletions) as lines_of_code_changed\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2024-01-08 00:00:00.000' AND\n      committed_date <= '2024-02-05 23:59:59.999'\n  \n    UNION ALL\n  \n    SELECT\n      'Sprint 11' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2024-02-19 00:00:00.000' AND\n      committed_date <= '2024-03-01 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      additions,\n      deletions\n    FROM commits\n    WHERE\n      committed_date >= '2024-03-04 00:00:00.000' AND\n      committed_date <= '2024-03-15 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -377,7 +377,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.number_of_issues, 0) as number_of_issues\nFROM (\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    count(*) as number_of_issues\n  FROM (\n    SELECT\n      'Sprint 9' as time1\n    FROM issues\n    WHERE\n      created_date >= '2023-12-18 00:00:00.000' AND\n      created_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1\n    FROM issues\n    WHERE\n      created_date >= '2024-02-12 00:00:00.000' AND\n      created_date <= '2024-02-24 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.number_of_issues, 0) as number_of_issues\nFROM (\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n  UNION\n  SELECT 'Sprint 12' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    count(*) as number_of_issues\n  FROM (\n    SELECT\n      'Sprint 10' as time1\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999' AND\n      type = \"BUG\"\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1\n    FROM issues\n    WHERE\n      created_date >= '2024-02-19 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND\n      type = \"BUG\"\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND\n      type = \"BUG\"\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -495,7 +495,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.mean_time_to_recover_in_min, 0) as mean_time_to_recover_in_min\nFROM (\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    AVG(TIMESTAMPDIFF(MINUTE, created_date, resolution_date)) / 60 AS mean_time_to_recover_in_min\n  FROM (\n    SELECT\n      'Sprint 9' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2023-12-18 00:00:00.000' AND\n      created_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-12 00:00:00.000' AND\n      created_date <= '2024-02-24 23:59:59.999'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.mean_time_to_recover_in_min, 0) as mean_time_to_recover_in_min\nFROM (\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n  UNION\n  SELECT 'Sprint 12' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    AVG(TIMESTAMPDIFF(MINUTE, created_date, resolution_date)) / 60 AS mean_time_to_recover_in_min\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-19 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND\n      type =\"BUG\"\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      created_date,\n      resolution_date\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND\n      type = \"BUG\"\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -535,6 +535,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisGridShow": false,
+            "axisLabel": "",
             "axisPlacement": "left",
             "axisWidth": 1,
             "fillOpacity": 80,
@@ -819,7 +820,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.total_hours, 0) as total_hours\nFROM (\n  SELECT 'Sprint 9' as time1\n  UNION\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    ROUND(AVG(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2) as total_hours\n  FROM (\n    SELECT\n      'Sprint 9' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2023-12-18 00:00:00.000' AND\n      created_date <= '2024-01-02 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-26 00:00:00.000' AND status = 'DONE'\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd.total_hours, 0) as total_hours\nFROM (\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n  UNION\n  SELECT 'Sprint 12' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    ROUND(AVG(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2) as total_hours\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999' AND \n      status = 'DONE' AND\n      type = \"REQUIREMENT\"\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-19 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND \n      status = 'DONE' AND\n      type = \"REQUIREMENT\"\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND \n      status = 'DONE' AND\n      type = \"REQUIREMENT\"\n  ) AS subquery\n  GROUP BY time1\n) AS cd ON sd.time1 = cd.time1 OR (sd.time1 IS NULL AND cd.time1 IS NULL);\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -936,7 +937,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fc00c08b-0331-4fdb-bc67-03d05d585830"
+        "uid": "bc53d6be-0ed2-46dc-aea1-394aebd02479"
       },
       "fieldConfig": {
         "defaults": {
@@ -991,7 +992,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fc00c08b-0331-4fdb-bc67-03d05d585830"
+            "uid": "bc53d6be-0ed2-46dc-aea1-394aebd02479"
           },
           "editorMode": "code",
           "expr": "100 * (1 - sum(kube_node_spec_unschedulable{node=~\".*\"}) / sum(kube_node_info{node=~\".*\"}))",
@@ -1076,15 +1077,15 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
     "hidden": true
   },
   "timezone": "Asia/Kolkata",
-  "title": "DevSecOps",
-  "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e0",
-  "version": 6,
+  "title": "DevSecOps Dashboard",
+  "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e01",
+  "version": 10,
   "weekStart": ""
 }
