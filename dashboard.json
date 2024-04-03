@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 9,
+  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -27,7 +27,7 @@
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
-      "description": "Number of builds executed in the selected time range",
+      "description": "Number of Jenkins pipeline builds executed for microservices deployment",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -179,7 +179,7 @@
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
-      "description": "",
+      "description": "Number of lines of code changed",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -294,7 +294,7 @@
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
-      "description": "Number of builds executed in the selected time range",
+      "description": "Number of bugs raised",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -407,7 +407,7 @@
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
-      "description": "Number of builds executed in the selected time range",
+      "description": "Average time taken to resolve bugs",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -662,7 +662,7 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 16,
+        "w": 8,
         "x": 8,
         "y": 9
       },
@@ -702,7 +702,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd_bug.total_hours, 0) as total_hours_bug,\n  COALESCE(cd_requirement.total_hours, 0) as total_hours_requirement,\n  CASE\n    WHEN COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0) = 0 THEN 0\n    ELSE ROUND((COALESCE(cd_bug.total_hours, 0) / (COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0))) * 100, 2)\n  END as percentage_bug,\n  CASE\n    WHEN COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0) = 0 THEN 0\n    ELSE ROUND((COALESCE(cd_requirement.total_hours, 0) / (COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0))) * 100, 2)\n  END as percentage_requirement\n\nFROM (\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n  UNION\n  SELECT 'Sprint 12' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    COALESCE(ROUND(SUM(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2), 0) as total_hours\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-07 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n  ) AS subquery\n  GROUP BY time1\n) AS cd_bug ON sd.time1 = cd_bug.time1 OR (sd.time1 IS NULL AND cd_bug.time1 IS NULL)\nLEFT JOIN (\n  SELECT\n    time1,\n    COALESCE(ROUND(SUM(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2), 0) as total_hours\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-29 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n  ) AS subquery\n  GROUP BY time1\n) AS cd_requirement ON sd.time1 = cd_requirement.time1 OR (sd.time1 IS NULL AND cd_requirement.time1 IS NULL);\n",
+          "rawSql": "SELECT\n  sd.time1,\n  COALESCE(cd_bug.total_hours, 0) as total_hours_bug,\n  COALESCE(cd_requirement.total_hours, 0) as total_hours_requirement\n  -- CASE\n  --   WHEN COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0) = 0 THEN 0\n  --   ELSE ROUND((COALESCE(cd_bug.total_hours, 0) / (COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0))) * 100, 2)\n  -- END as percentage_bug,\n  -- CASE\n  --   WHEN COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0) = 0 THEN 0\n  --   ELSE ROUND((COALESCE(cd_requirement.total_hours, 0) / (COALESCE(cd_bug.total_hours, 0) + COALESCE(cd_requirement.total_hours, 0))) * 100, 2)\n  -- END as percentage_requirement\n\nFROM (\n  SELECT 'Sprint 10' as time1\n  UNION\n  SELECT 'Sprint 11' as time1\n  UNION\n  SELECT 'Sprint 12' as time1\n) AS sd\nLEFT JOIN (\n  SELECT\n    time1,\n    COALESCE(ROUND(SUM(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2), 0) as total_hours\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-07 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND status = 'DONE' AND type = 'BUG'\n  ) AS subquery\n  GROUP BY time1\n) AS cd_bug ON sd.time1 = cd_bug.time1 OR (sd.time1 IS NULL AND cd_bug.time1 IS NULL)\nLEFT JOIN (\n  SELECT\n    time1,\n    COALESCE(ROUND(SUM(TIMESTAMPDIFF(HOUR, created_date, updated_date)), 2), 0) as total_hours\n  FROM (\n    SELECT\n      'Sprint 10' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-01-08 00:00:00.000' AND\n      created_date <= '2024-02-05 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 11' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-02-29 00:00:00.000' AND\n      created_date <= '2024-03-01 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n\n    UNION ALL\n\n    SELECT\n      'Sprint 12' as time1,\n      created_date,\n      updated_date\n    FROM issues\n    WHERE\n      created_date >= '2024-03-04 00:00:00.000' AND\n      created_date <= '2024-03-15 23:59:59.999' AND status = 'DONE' AND type = 'REQUIREMENT'\n  ) AS subquery\n  GROUP BY time1\n) AS cd_requirement ON sd.time1 = cd_requirement.time1 OR (sd.time1 IS NULL AND cd_requirement.time1 IS NULL);",
           "refId": "A",
           "sql": {
             "columns": [
@@ -723,7 +723,7 @@
           }
         }
       ],
-      "title": "Requirement vs Bug",
+      "title": "Requirement vs Bug Effort",
       "transparent": true,
       "type": "barchart"
     },
@@ -732,7 +732,7 @@
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
-      "description": "",
+      "description": "Average time to taken to complete user stories",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -781,8 +781,8 @@
       "gridPos": {
         "h": 9,
         "w": 8,
-        "x": 0,
-        "y": 18
+        "x": 16,
+        "y": 9
       },
       "id": 24,
       "links": [],
@@ -850,7 +850,7 @@
         "type": "mysql",
         "uid": "P430005175C4C7810"
       },
-      "description": "",
+      "description": "Response time of each microservice",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -871,7 +871,7 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 8,
+        "x": 0,
         "y": 18
       },
       "id": 21,
@@ -937,8 +937,9 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bc53d6be-0ed2-46dc-aea1-394aebd02479"
+        "uid": "b4b2678e-c6ce-438c-8cdd-e92b9d13897a"
       },
+      "description": "Percentage of the cluster available",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -965,7 +966,7 @@
       "gridPos": {
         "h": 8,
         "w": 6,
-        "x": 16,
+        "x": 8,
         "y": 18
       },
       "id": 23,
@@ -992,7 +993,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bc53d6be-0ed2-46dc-aea1-394aebd02479"
+            "uid": "b4b2678e-c6ce-438c-8cdd-e92b9d13897a"
           },
           "editorMode": "code",
           "expr": "100 * (1 - sum(kube_node_spec_unschedulable{node=~\".*\"}) / sum(kube_node_info{node=~\".*\"}))",
@@ -1086,6 +1087,6 @@
   "timezone": "Asia/Kolkata",
   "title": "DevSecOps Dashboard",
   "uid": "ceb77429-52c4-4285-838e-4f87e0cd97e01",
-  "version": 10,
+  "version": 7,
   "weekStart": ""
 }
